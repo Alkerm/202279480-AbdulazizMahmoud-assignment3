@@ -32,7 +32,8 @@ const observer = new IntersectionObserver(
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add("visible");
-        observer.unobserve(entry.target); // run once
+      } else {
+        entry.target.classList.remove("visible"); // reset so it replays next scroll
       }
     });
   },
