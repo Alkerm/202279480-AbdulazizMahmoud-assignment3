@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en" data-theme="dark">
   <head>
     <meta charset="utf-8" />
@@ -88,39 +88,50 @@
       <!-- Projects -->
       <section class="section" id="projects">
         <div class="container">
-          <div class="section-header">
+          <div class="section-header fade-in">
             <h2>Selected projects</h2>
             <p>Hands-on work that blends AI, product design, and rapid delivery.</p>
           </div>
-          <div class="card-grid">
-            <article class="card">
+
+          <!-- Filter tabs -->
+          <div class="filter-tabs" role="group" aria-label="Filter projects by category">
+            <button class="filter-btn active" data-filter="all" id="filter-all">All</button>
+            <button class="filter-btn" data-filter="ai" id="filter-ai">🤖 AI</button>
+            <button class="filter-btn" data-filter="web" id="filter-web">🌐 Web</button>
+            <button class="filter-btn" data-filter="ml" id="filter-ml">📊 ML</button>
+          </div>
+
+          <div class="card-grid" id="project-grid">
+            <article class="card fade-in" data-category="ai">
               <div class="card-image">
                 <img src="assets/images/Face-Swap.png" alt="AI Superhero face transformation preview" />
               </div>
               <div class="card-body">
+                <span class="card-tag">AI</span>
                 <h3>AI Superhero Face Transformation System</h3>
                 <p>
                   Developed a full-stack AI face-merging application for hospital pediatric engagement, building an interactive HTML5/CSS3/Vanilla JS frontend and a Python/Flask backend integrated with OpenCV and Replicate API for automated face detection and high-fidelity blending.
                 </p>
-
               </div>
             </article>
-            <article class="card">
+            <article class="card fade-in" data-category="web">
               <div class="card-image">
                 <img src="assets/images/Pitch1.jpeg" alt="SwipePitch interface concept preview" />
               </div>
               <div class="card-body">
+                <span class="card-tag">Web</span>
                 <h3>SwipePitch — AI-Powered Fintech Platform</h3>
                 <p>
                   Secured 1st place at the ByteBank Fintech Hackathon, outperforming 20+ teams with a swipe-based investing platform designed to make discovering and investing in small-scale startups intuitive and accessible. Implemented AI-powered recommendations based on user behavior and delivered a functional product in 48 hours.
                 </p>
               </div>
             </article>
-            <article class="card">
+            <article class="card fade-in" data-category="ml">
               <div class="card-image">
                 <img src="assets/images/292Project.jpeg" alt="Maternal health risk classification project" />
               </div>
               <div class="card-body">
+                <span class="card-tag">ML</span>
                 <h3>Maternal Health Risk Classification</h3>
                 <p>
                   Compared SVM, KNN, and MLP models to classify maternal health risk levels after
@@ -129,31 +140,51 @@
               </div>
             </article>
           </div>
+
+          <!-- Empty state -->
+          <p class="empty-state" id="no-projects" aria-live="polite">No projects found in this category.</p>
+        </div>
+      </section>
+
+      <!-- Champions League Widget -->
+      <section class="section" id="cl-widget">
+        <div class="container">
+          <div class="section-header fade-in">
+            <h2>⚽ UEFA Champions League</h2>
+            <p>Live fixtures and the road to the final — powered by football-data.org.</p>
+          </div>
+          <div id="cl-content">
+            <div class="cl-loading" id="cl-loading" aria-live="polite">
+              <span class="spinner" aria-hidden="true"></span> Loading fixtures…
+            </div>
+            <div id="cl-matches" class="cl-grid"></div>
+            <p class="cl-error" id="cl-error" hidden>⚠️ Couldn't load fixtures right now. Check back later!</p>
+          </div>
         </div>
       </section>
 
       <!-- Skills -->
       <section class="section section-alt" id="skills">
         <div class="container">
-          <div class="section-header">
-            <h2>Skills & tools</h2>
+          <div class="section-header fade-in">
+            <h2>Skills &amp; tools</h2>
             <p>Core technologies and strengths I rely on for real-world delivery.</p>
           </div>
           <div class="pill-grid">
-            <span>Python</span>
-            <span>Java</span>
-            <span>C#</span>
-            <span>HTML/CSS/JS</span>
-            <span>React</span>
-            <span>Node.js</span>
-            <span>SQL</span>
-            <span>MongoDB</span>
-            <span>PyTorch</span>
-            <span>TensorFlow</span>
-            <span>Scikit-learn</span>
-            <span>Leadership</span>
-            <span>Teamwork</span>
-            <span>Time management</span>
+            <span class="fade-in">Python</span>
+            <span class="fade-in">Java</span>
+            <span class="fade-in">C#</span>
+            <span class="fade-in">HTML/CSS/JS</span>
+            <span class="fade-in">React</span>
+            <span class="fade-in">Node.js</span>
+            <span class="fade-in">SQL</span>
+            <span class="fade-in">MongoDB</span>
+            <span class="fade-in">PyTorch</span>
+            <span class="fade-in">TensorFlow</span>
+            <span class="fade-in">Scikit-learn</span>
+            <span class="fade-in">Leadership</span>
+            <span class="fade-in">Teamwork</span>
+            <span class="fade-in">Time management</span>
           </div>
         </div>
       </section>
