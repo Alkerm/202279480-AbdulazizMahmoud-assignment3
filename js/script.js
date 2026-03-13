@@ -219,20 +219,19 @@ async function loadCLFixtures() {
   const timeoutId = setTimeout(() => controller.abort(), 8000);
 
   try {
-    // Route through CORS proxy so browser requests are allowed
-    const target = encodeURIComponent(
-      "https://api.football-data.org/v4/competitions/CL/matches"
-    );
+    // corsproxy.io forwards all headers including X-Auth-Token
     const res = await fetch(
-      `https://api.allorigins.win/get?url=${target}&headers=${encodeURIComponent(JSON.stringify({"X-Auth-Token": CL_API_KEY}))}`,
-      { signal: controller.signal }
+      "https://corsproxy.io/?https://api.football-data.org/v4/competitions/CL/matches",
+      {
+        headers: { "X-Auth-Token": CL_API_KEY },
+        signal: controller.signal,
+      }
     );
     clearTimeout(timeoutId);
 
     if (!res.ok) throw new Error(`API error ${res.status}`);
 
-    const envelope = await res.json();           // proxy wraps in { contents: "..." }
-    const data = JSON.parse(envelope.contents);  // actual API response
+    const data = await res.json();          // direct JSON, no proxy envelope
     const all = data.matches || [];
 
     // Prefer upcoming (SCHEDULED/TIMED), fall back to recent finished

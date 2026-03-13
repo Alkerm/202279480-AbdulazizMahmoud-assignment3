@@ -621,22 +621,6 @@ textarea.invalid {
 #project-grid .card:nth-child(2) { transition-delay: 0.15s; }
 #project-grid .card:nth-child(3) { transition-delay: 0.3s; }
 
-/* Stagger delay for skill pills */
-.pill-grid .fade-in:nth-child(1)  { transition-delay: 0s; }
-.pill-grid .fade-in:nth-child(2)  { transition-delay: 0.06s; }
-.pill-grid .fade-in:nth-child(3)  { transition-delay: 0.12s; }
-.pill-grid .fade-in:nth-child(4)  { transition-delay: 0.18s; }
-.pill-grid .fade-in:nth-child(5)  { transition-delay: 0.24s; }
-.pill-grid .fade-in:nth-child(6)  { transition-delay: 0.30s; }
-.pill-grid .fade-in:nth-child(7)  { transition-delay: 0.36s; }
-.pill-grid .fade-in:nth-child(8)  { transition-delay: 0.42s; }
-.pill-grid .fade-in:nth-child(9)  { transition-delay: 0.48s; }
-.pill-grid .fade-in:nth-child(10) { transition-delay: 0.54s; }
-.pill-grid .fade-in:nth-child(11) { transition-delay: 0.60s; }
-.pill-grid .fade-in:nth-child(12) { transition-delay: 0.66s; }
-.pill-grid .fade-in:nth-child(13) { transition-delay: 0.72s; }
-.pill-grid .fade-in:nth-child(14) { transition-delay: 0.78s; }
-
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
