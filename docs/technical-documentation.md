@@ -61,9 +61,7 @@ Behavior:
 The widget fetches UEFA Champions League data from ESPN's public soccer API using `fetch()`.
 
 Current implementation details:
-- requests a season date range instead of the default daily scoreboard
 - filters the result to upcoming fixtures only
-- excludes placeholder matchups unless both teams have assigned logos
 - displays the two team names with logos
 - displays match date, kickoff time in KSA, and venue when available
 - hides the loading indicator once data is loaded or if an error occurs
@@ -79,7 +77,6 @@ const response = await fetch(
 Handled states:
 - loading
 - successful data render
-- no available fixtures after filtering
 - API / network failure
 
 ## 6. Card Hover Effects

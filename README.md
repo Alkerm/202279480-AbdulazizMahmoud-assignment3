@@ -3,7 +3,7 @@
 ## Project Description
 
 This project is a personal portfolio website for Abdulaziz Ayman Elkarm, a Software Engineering student at KFUPM. It is built with vanilla HTML, CSS, and JavaScript and presents academic background, selected projects, skills, and contact information in a responsive dark-first layout with a light mode toggle.
-The site also includes an interactive UEFA Champions League widget that fetches upcoming confirmed fixtures from ESPN's public API and displays team logos, date, time in KSA, and venue information when available.
+The site also includes an interactive UEFA Champions League widget that fetches upcoming confirmed matches from ESPN's public API.
 
 ## Features
 
@@ -41,10 +41,8 @@ You can also open `index.html` directly, but using a local server is the safer o
 
 ## AI Use Summary
 
-AI assistance was used to help with implementation, debugging, and documentation. It supported the initial structure of interactive features such as filtering, validation, animations, and API integration, but the code was then reviewed, adjusted, and aligned with the final project requirements. A detailed breakdown is available in [docs/ai-usage-report.md](docs/ai-usage-report.md).
+AI assistance was used to help with implementation, debugging, and documentation. It supported the initial structure of interactive features such as filtering, validation, animations, and API integration, but the code was then reviewed, adjusted, and aligned with the final assignment requirements. A detailed breakdown is available in [docs/ai-usage-report.md](docs/ai-usage-report.md).
 
 ## Live Deployment
-
 GitHub Pages:
-
 https://alkerm.github.io/202279480-AbdulazizMahmoud-assignment2/

@@ -1,14 +1,11 @@
 # AI Usage Report — Assignment 2
 
 **Student:** Abdulaziz Ayman Elkarm (202279480)  
-**Course:** Web Engineering — KFUPM  
-**Assignment:** Assignment 2 – Interactive Portfolio
-
 ---
 
 ## Tools Used
 
-### Antigravity & CODEX 
+### Claude & CODEX 
 
 **How they were used:**
 - Helped plan and break down the assignment requirements into a structured checklist (`PLAN.md`)
@@ -21,9 +18,7 @@
   - Filter tab styles with active state
   - Card hover lift + glow + image zoom effects
   - Scroll fade-in animation system using `.fade-in` / `.visible` classes
-  - Profile image pulse animation (`@keyframes profilePulse`)
-  - CL match card grid layout and spinner
-  - Inline form error and success banner styles
+  - Profile image pulse animation 
 - Help in `js/script.js` to add:
   - `IntersectionObserver` for scroll-triggered fade-in
   - Project filter logic with empty-state message
@@ -41,8 +36,6 @@ All AI-generated code in this project was treated as a starting point, not a fin
 - Generated code was **manually reviewed** for correctness, accessibility, and alignment with the assignment requirements
 - Where the AI's output did not match the intended design or behavior, it was **edited or rejected**
 - No AI-generated text was submitted as personal reflection or academic writing without disclosure
-- The API key for `football-data.org` was obtained independently and integrated by the student
-- The student made all content and design decisions (categories, sections, color palette, widget choice)
 
 ---
 
@@ -50,7 +43,6 @@ All AI-generated code in this project was treated as a starting point, not a fin
 
 Through building this assignment with AI assistance, the following concepts were actively learned and applied:
 
-- **`IntersectionObserver` API** — understanding how scroll-based visibility detection works in the browser and why it is more performant than scroll event listeners
 - **`fetch()` and async/await** — how to make HTTP requests in the browser, handle promises, and manage loading/error states cleanly
 - **Form validation with JavaScript** — why `novalidate` is used alongside custom JS validation, and how to give per-field feedback without browser-native alerts
 - **CSS custom properties (variables)** — how a design token system enables seamless dark/light theming across the entire site
@@ -64,7 +56,7 @@ Through building this assignment with AI assistance, the following concepts were
 
 ### Benefits
 - **Speed** — AI significantly reduced the time needed to scaffold boilerplate code like form structure, CSS resets, and API fetch wrappers
-- **Code quality** — suggestions followed modern best practices (e.g., `IntersectionObserver` over scroll listeners, `novalidate` + JS validation)
+- **Code quality** — suggestions followed modern best practices 
 - **Accessibility** — AI proactively added `aria-live`, `role`, and `for`/`id` attribute pairs that may have been overlooked otherwise
 - **Documentation** — AI helped structure technical documentation clearly and consistently
 
@@ -78,4 +70,4 @@ Through building this assignment with AI assistance, the following concepts were
 
 ## Summary
 
-AI was used to accelerate implementation of standard interactive web features (filtering, validation, animations, API calls). All generated code was reviewed and understood before use. The AI did not make design or content decisions independently — choices like which categories to use, which API to integrate, and the page layout were made by the student.
+AI was used to accelerate implementation of standard interactive web features (filtering, validation, animations, API calls). All generated code was reviewed and understood before use. The AI did not make design or content decisions independently.
