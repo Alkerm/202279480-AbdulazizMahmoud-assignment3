@@ -1,66 +1,50 @@
-# Abdulaziz Elkarm — Personal Portfolio (Assignment 2)
+# Abdulaziz Elkarm Personal Portfolio
 
-## 📌 Project Description
+## Project Description
 
-A personal portfolio website for Abdulaziz Ayman Elkarm, a Software Engineering student at KFUPM. Built as a progression from Assignment 1, this version adds full interactivity, dynamic content, API integration, and polished animations.
+This project is a personal portfolio website for Abdulaziz Ayman Elkarm, a Software Engineering student at KFUPM. It is built with vanilla HTML, CSS, and JavaScript and presents academic background, selected projects, skills, and contact information in a responsive dark-first layout with a light mode toggle.
+The site also includes an interactive UEFA Champions League widget that fetches upcoming confirmed fixtures from ESPN's public API and displays team logos, date, time in KSA, and venue information when available.
 
-### Key Features
-- **Dark / Light theme toggle** — persisted across sessions via `localStorage`
-- **Project filter tabs** — filter projects by category (All / AI / Web / ML) with animated transitions
-- **Scroll fade-in animations** — sections and cards animate in as you scroll using `IntersectionObserver`
-- **Card hover effects** — lift, glow, and image zoom on project cards
-- **Inline form validation** — per-field error messages and an animated success banner (no browser alerts)
-- **Champions League widget** — live UEFA CL fixtures fetched from `football-data.org` API, with loading spinner and error handling
+## Features
 
----
+- Dark / light theme toggle with `localStorage` persistence
+- Scroll-triggered fade-in animations using `IntersectionObserver`
+- Project filter buttons for quick category-based browsing
+- Inline contact form validation with per-field feedback
+- Live Champions League fixtures widget powered by ESPN's public API
+- Responsive layout built with semantic HTML and accessible labels
 
-## 🗂️ Folder Structure
+## How to Run Locally
 
-```
-assignment-2/
-├── README.md
-├── index.html
-├── css/
-│   └── styles.css
-├── js/
-│   └── script.js
-├── assets/
-│   └── images/
-├── docs/
-│   ├── ai-usage-report.md
-│   └── technical-documentation.md
-└── .gitignore
-```
-
----
-
-## 🚀 How to Run Locally
-
-No build step required — this is a plain HTML/CSS/JS project.
+No build step is required.
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/Alkerm/202279480-AbdulazizMahmoud-assignment2.git
-   ```
-2. Open `index.html` in your browser directly, **or** use a local dev server:
-   ```bash
-   # Using VS Code Live Server extension (recommended)
-   # Right-click index.html → "Open with Live Server"
-   
-   # Or using Python
-   python -m http.server 8080
-   ```
-3. Navigate to `http://localhost:8080`
 
-> **Note:** The Champions League widget requires an internet connection to fetch live data from the `football-data.org` API.
+```bash
+git clone https://github.com/Alkerm/202279480-AbdulazizMahmoud-assignment2.git
+cd 202279480-AbdulazizMahmoud-assignment2
+```
 
----
+2. Start a local server. Any simple static server works. For example:
 
-## 🤖 AI Tools Used
+```bash
+python -m http.server 8080
+```
 
-I used Antigravity (Claude Sonnet) to assist with code generation, debugging, and documentation. See the full breakdown in [`docs/ai-usage-report.md`](docs/ai-usage-report.md).
+3. Open the site in your browser:
 
----
+```text
+http://localhost:8080
+```
 
-## 🌐 Live Deployment
- https://alkerm.github.io/202279480-AbdulazizMahmoud-assignment2/
+You can also open `index.html` directly, but using a local server is the safer option for testing browser behavior consistently.
+
+## AI Use Summary
+
+AI assistance was used to help with implementation, debugging, and documentation. It supported the initial structure of interactive features such as filtering, validation, animations, and API integration, but the code was then reviewed, adjusted, and aligned with the final project requirements. A detailed breakdown is available in [docs/ai-usage-report.md](docs/ai-usage-report.md).
+
+## Live Deployment
+
+GitHub Pages:
+
+https://alkerm.github.io/202279480-AbdulazizMahmoud-assignment2/

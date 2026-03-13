@@ -1,260 +1,331 @@
-/* ─────────────────────────────────────────
-   script.js  |  Portfolio interactive layer
-   ───────────────────────────────────────── */
-
-// ── 1. THEME TOGGLE (persisted via localStorage) ──────────────────────────
-const toggleButton = document.querySelector("#theme-toggle");
 const root = document.documentElement;
 
-const updateToggleText = (theme) => {
-  toggleButton.textContent = theme === "light" ? "Dark mode" : "Light mode";
-};
+function initThemeToggle() {
+  const toggleButton = document.getElementById("theme-toggle");
+  if (!toggleButton) {
+    return;
+  }
 
-const applyTheme = (theme) => {
-  root.setAttribute("data-theme", theme);
-  localStorage.setItem("theme", theme);
-  updateToggleText(theme);
-};
+  const updateToggleText = (theme) => {
+    toggleButton.textContent = theme === "light" ? "Dark mode" : "Light mode";
+  };
 
-const savedTheme = localStorage.getItem("theme") || "dark";
-applyTheme(savedTheme);
+  const applyTheme = (theme) => {
+    root.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    updateToggleText(theme);
+  };
 
-toggleButton.addEventListener("click", () => {
-  const nextTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-  applyTheme(nextTheme);
-});
+  const savedTheme = localStorage.getItem("theme") || "dark";
+  applyTheme(savedTheme);
 
-
-// ── 2. SCROLL FADE-IN  (IntersectionObserver) ─────────────────────────────
-const fadeEls = document.querySelectorAll(".fade-in");
-const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-      } else {
-        entry.target.classList.remove("visible"); // reset so it replays next scroll
-      }
-    });
-  },
-  { threshold: 0.2 }
-);
-fadeEls.forEach((el) => observer.observe(el));
-
-
-// ── 3. PROJECT FILTER TABS ────────────────────────────────────────────────
-const filterBtns = document.querySelectorAll(".filter-btn");
-const cards      = document.querySelectorAll("#project-grid .card");
-const noProjects = document.getElementById("no-projects");
-
-filterBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    // Update active button
-    filterBtns.forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    const filter = btn.dataset.filter;
-    let visible = 0;
-
-    cards.forEach((card) => {
-      const match = filter === "all" || card.dataset.category === filter;
-      if (match) {
-        card.style.display = "";
-        card.style.animation = "fadeUp 0.35s ease both";
-        visible++;
-      } else {
-        card.style.display = "none";
-      }
-    });
-
-    // Show / hide empty state
-    noProjects.style.display = visible === 0 ? "block" : "none";
+  toggleButton.addEventListener("click", () => {
+    const nextTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    applyTheme(nextTheme);
   });
-});
-
-
-// ── 4. CONTACT FORM  — inline validation + success banner ─────────────────
-const form       = document.getElementById("contact-form");
-const nameInput  = document.getElementById("input-name");
-const emailInput = document.getElementById("input-email");
-const msgInput   = document.getElementById("input-message");
-const errName    = document.getElementById("error-name");
-const errEmail   = document.getElementById("error-email");
-const errMsg     = document.getElementById("error-message");
-const successBox = document.getElementById("form-success");
-
-// Email regex
-const emailRE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function setError(input, span, message) {
-  span.textContent = message;
-  input.classList.add("invalid");
 }
 
-function clearError(input, span) {
-  span.textContent = "";
-  input.classList.remove("invalid");
+function initFadeIn() {
+  const fadeElements = document.querySelectorAll(".fade-in");
+  if (!fadeElements.length || typeof IntersectionObserver === "undefined") {
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        entry.target.classList.toggle("visible", entry.isIntersecting);
+      });
+    },
+    { threshold: 0.2 }
+  );
+
+  fadeElements.forEach((element) => observer.observe(element));
 }
 
-// Live clear on input
-[nameInput, emailInput, msgInput].forEach((el, i) => {
-  el.addEventListener("input", () => {
-    const spans = [errName, errEmail, errMsg];
-    clearError(el, spans[i]);
+function initProjectFilters() {
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  const cards = document.querySelectorAll("#project-grid .card");
+  const emptyState = document.getElementById("no-projects");
+
+  if (!filterButtons.length || !cards.length || !emptyState) {
+    return;
+  }
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      filterButtons.forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+
+      const filter = button.dataset.filter;
+      let visibleCount = 0;
+
+      cards.forEach((card) => {
+        const isMatch = filter === "all" || card.dataset.category === filter;
+        card.style.display = isMatch ? "" : "none";
+
+        if (isMatch) {
+          card.style.animation = "none";
+          void card.offsetWidth;
+          card.style.animation = "fadeUp 0.35s ease both";
+          visibleCount += 1;
+        }
+      });
+
+      emptyState.style.display = visibleCount === 0 ? "block" : "none";
+    });
   });
-});
+}
 
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  let valid = true;
-
-  if (!nameInput.value.trim()) {
-    setError(nameInput, errName, "Name is required.");
-    valid = false;
-  } else {
-    clearError(nameInput, errName);
+function ensureFieldError(input) {
+  const label = input.closest("label");
+  if (!label) {
+    return null;
   }
 
-  if (!emailRE.test(emailInput.value.trim())) {
-    setError(emailInput, errEmail, "Please enter a valid email address.");
-    valid = false;
-  } else {
-    clearError(emailInput, errEmail);
+  let errorNode = label.querySelector(".field-error");
+  if (!errorNode) {
+    errorNode = document.createElement("span");
+    errorNode.className = "field-error";
+    errorNode.setAttribute("aria-live", "polite");
+    label.appendChild(errorNode);
   }
 
-  if (msgInput.value.trim().length < 10) {
-    setError(msgInput, errMsg, "Message must be at least 10 characters.");
-    valid = false;
-  } else {
-    clearError(msgInput, errMsg);
+  return errorNode;
+}
+
+function initContactForm() {
+  const form = document.querySelector(".contact-form");
+  if (!form) {
+    return;
   }
 
-  if (!valid) return;
+  const nameInput = form.querySelector('input[name="name"]');
+  const emailInput = form.querySelector('input[name="email"]');
+  const messageInput = form.querySelector('textarea[name="message"]');
 
-  // All good — show success banner
-  successBox.hidden = false;
-  form.reset();
+  if (!nameInput || !emailInput || !messageInput) {
+    return;
+  }
 
-  // Hide banner after 5 s
-  setTimeout(() => { successBox.hidden = true; }, 5000);
-});
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const fieldMap = [
+    { input: nameInput, validate: (value) => value.trim() ? "" : "Name is required." },
+    {
+      input: emailInput,
+      validate: (value) => emailPattern.test(value.trim()) ? "" : "Please enter a valid email address.",
+    },
+    {
+      input: messageInput,
+      validate: (value) => value.trim().length >= 10 ? "" : "Message must be at least 10 characters.",
+    },
+  ];
 
+  let successBox = form.querySelector(".form-success");
+  if (!successBox) {
+    successBox = document.createElement("div");
+    successBox.className = "form-success";
+    successBox.hidden = true;
+    successBox.textContent = "Message sent successfully.";
+    form.prepend(successBox);
+  }
 
-// ── 5. CHAMPIONS LEAGUE WIDGET ────────────────────────────────────────────
-// Sign up free at https://www.football-data.org/client/register to get a key
-const CL_API_KEY = "8d45a0665cda4271a836a359d7e32b14";
+  const setFieldState = (input, message) => {
+    const errorNode = ensureFieldError(input);
+    input.classList.toggle("invalid", Boolean(message));
+    if (errorNode) {
+      errorNode.textContent = message;
+    }
+  };
 
-const clLoading = document.getElementById("cl-loading");
-const clMatches = document.getElementById("cl-matches");
-const clError   = document.getElementById("cl-error");
+  fieldMap.forEach(({ input, validate }) => {
+    ensureFieldError(input);
+    input.addEventListener("input", () => {
+      setFieldState(input, validate(input.value));
+    });
+  });
 
-// Stage label map (football-data.org codes → human-readable)
-const STAGE_LABELS = {
-  "ROUND_OF_16":   "Round of 16",
-  "QUARTER_FINALS": "Quarter-finals",
-  "SEMI_FINALS":   "Semi-finals",
-  "FINAL":         "Final",
-  "GROUP_STAGE":   "Group Stage",
-  "PLAYOFFS":      "Play-offs",
-};
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-function formatDate(utcStr) {
-  const d = new Date(utcStr);
-  return d.toLocaleDateString("en-GB", {
+    let isValid = true;
+    fieldMap.forEach(({ input, validate }) => {
+      const message = validate(input.value);
+      setFieldState(input, message);
+      if (message) {
+        isValid = false;
+      }
+    });
+
+    if (!isValid) {
+      successBox.hidden = true;
+      return;
+    }
+
+    successBox.hidden = false;
+    form.reset();
+    fieldMap.forEach(({ input }) => setFieldState(input, ""));
+    window.setTimeout(() => {
+      successBox.hidden = true;
+    }, 5000);
+  });
+}
+
+function formatMatchDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleString("en-GB", {
     weekday: "short",
     day: "numeric",
     month: "short",
+    timeZone: "Asia/Riyadh",
+  });
+}
+
+function formatMatchTime(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
     timeZone: "Asia/Riyadh",
   }) + " KSA";
 }
 
-function renderMatches(matches) {
-  if (!matches.length) {
-    clMatches.innerHTML = `<p style="color:var(--muted)">No upcoming fixtures found.</p>`;
-    return;
-  }
+function getChampionsLeagueSeasonRange() {
+  const now = new Date();
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth() + 1;
+  const seasonStartYear = month >= 7 ? year : year - 1;
+  const seasonEndYear = seasonStartYear + 1;
 
-  clMatches.innerHTML = matches.map((m, i) => {
-    const stage  = STAGE_LABELS[m.stage] || m.stage || "—";
-    const home   = m.homeTeam.shortName || m.homeTeam.name;
-    const away   = m.awayTeam.shortName || m.awayTeam.name;
-    const date   = formatDate(m.utcDate);
-    const status = m.status;
-
-    let scoreHTML = "";
-    if (status === "FINISHED" || status === "IN_PLAY" || status === "PAUSED") {
-      const hs = m.score.fullTime.home ?? m.score.halfTime.home ?? "—";
-      const as = m.score.fullTime.away ?? m.score.halfTime.away ?? "—";
-      scoreHTML = `<div class="cl-score">${hs} – ${as}</div>`;
-    }
-
-    return `
-      <div class="cl-match-card" style="animation-delay:${i * 60}ms">
-        <span class="cl-stage">${stage}</span>
-        <div class="cl-teams">
-          <span>${home}</span>
-          <span class="cl-vs">vs</span>
-          <span>${away}</span>
-        </div>
-        ${scoreHTML}
-        <span class="cl-date">${date}</span>
-      </div>`;
-  }).join("");
+  return `${seasonStartYear}0901-${seasonEndYear}0630`;
 }
 
-async function loadCLFixtures() {
-  if (CL_API_KEY === "YOUR_API_KEY_HERE") {
-    clLoading.hidden = true;
-    clMatches.innerHTML = `
-      <p style="color:var(--muted);padding:20px 0">
-        🔑 Add your <strong>football-data.org</strong> API key in <code>js/script.js</code> to see live fixtures.
-      </p>`;
+function getAssignedTeams(event) {
+  const competition = event.competitions?.[0];
+  const competitors = competition?.competitors || [];
+  const home = competitors.find((team) => team.homeAway === "home");
+  const away = competitors.find((team) => team.homeAway === "away");
+  const homeLogo = home?.team?.logos?.[0]?.href || home?.team?.logo || "";
+  const awayLogo = away?.team?.logos?.[0]?.href || away?.team?.logo || "";
+
+  if (!home?.team?.displayName || !away?.team?.displayName || !homeLogo || !awayLogo) {
+    return null;
+  }
+
+  return { competition, home, away, homeLogo, awayLogo };
+}
+
+function renderChampionsLeagueMatches(container, events) {
+  if (!events.length) {
+    container.innerHTML = '<p style="color:var(--muted)">No fixtures available right now.</p>';
     return;
   }
 
-  // 8-second timeout so the spinner never hangs forever
+  container.innerHTML = events
+    .map((event, index) => {
+      const teams = getAssignedTeams(event);
+      if (!teams) {
+        return "";
+      }
+
+      const { competition, home, away, homeLogo, awayLogo } = teams;
+      const status = event.status?.type?.name || "";
+      const matchDate = formatMatchDate(event.date);
+      const matchTime = formatMatchTime(event.date);
+      const venue = competition?.venue?.fullName || competition?.venue?.address?.city || "Venue to be confirmed";
+
+      const homeName = home?.team?.shortDisplayName || home?.team?.displayName || "TBD";
+      const awayName = away?.team?.shortDisplayName || away?.team?.displayName || "TBD";
+      const homeTeamHtml = `
+        <span class="cl-team">
+          ${homeLogo ? `<img class="cl-team-logo" src="${homeLogo}" alt="${homeName} logo" loading="lazy" />` : ""}
+          <span>${homeName}</span>
+        </span>
+      `;
+      const awayTeamHtml = `
+        <span class="cl-team cl-team--away">
+          ${awayLogo ? `<img class="cl-team-logo" src="${awayLogo}" alt="${awayName} logo" loading="lazy" />` : ""}
+          <span>${awayName}</span>
+        </span>
+      `;
+
+      let scoreHtml = "";
+      if (status === "STATUS_FINAL" || status === "STATUS_IN_PROGRESS" || status === "STATUS_HALFTIME") {
+        const homeScore = home?.score ?? "-";
+        const awayScore = away?.score ?? "-";
+        scoreHtml = `<div class="cl-score">${homeScore} - ${awayScore}</div>`;
+      }
+
+      return `
+        <div class="cl-match-card" style="animation-delay:${index * 60}ms">
+          <div class="cl-teams">
+            ${homeTeamHtml}
+            <span class="cl-vs">vs</span>
+            ${awayTeamHtml}
+          </div>
+          ${scoreHtml}
+          <div class="cl-meta-row">
+            <span class="cl-date">${matchDate}</span>
+            <span class="cl-time">${matchTime}</span>
+          </div>
+          <span class="cl-venue">${venue}</span>
+        </div>
+      `;
+    })
+    .filter(Boolean)
+    .join("");
+}
+
+async function initChampionsLeagueWidget() {
+  const loadingNode = document.getElementById("cl-loading");
+  const matchesNode = document.getElementById("cl-matches");
+  const errorNode = document.getElementById("cl-error");
+
+  if (!loadingNode || !matchesNode || !errorNode) {
+    return;
+  }
+
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 8000);
+  const timeoutId = window.setTimeout(() => controller.abort(), 8000);
 
   try {
-    // corsproxy.io forwards all headers including X-Auth-Token
-    const res = await fetch(
-      "https://corsproxy.io/?https://api.football-data.org/v4/competitions/CL/matches",
-      {
-        headers: { "X-Auth-Token": CL_API_KEY },
-        signal: controller.signal,
-      }
+    const seasonRange = getChampionsLeagueSeasonRange();
+    const response = await fetch(
+      `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard?dates=${seasonRange}&limit=200&lang=en&region=gb&league=uefa.champions`,
+      { signal: controller.signal }
     );
-    clearTimeout(timeoutId);
 
-    if (!res.ok) throw new Error(`API error ${res.status}`);
+    window.clearTimeout(timeoutId);
 
-    const data = await res.json();          // direct JSON, no proxy envelope
-    const all = data.matches || [];
+    if (!response.ok) {
+      throw new Error(`ESPN API error ${response.status}`);
+    }
 
-    // Prefer upcoming (SCHEDULED/TIMED), fall back to recent finished
-    const upcoming = all
-      .filter((m) => m.status === "SCHEDULED" || m.status === "TIMED")
-      .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate))
-      .slice(0, 9);
+    const data = await response.json();
+    const events = Array.isArray(data.events) ? data.events : [];
+    const now = Date.now();
+    const upcomingEvents = events
+      .filter((event) => {
+        const eventTime = Date.parse(event.date);
+        return Number.isFinite(eventTime) && eventTime >= now && Boolean(getAssignedTeams(event));
+      })
+      .sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
 
-    const recent = all
-      .filter((m) => m.status === "FINISHED")
-      .sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate))
-      .slice(0, 9);
-
-    const toShow = upcoming.length ? upcoming : recent;
-
-    clLoading.hidden = true;
-    renderMatches(toShow);
-  } catch (err) {
-    clearTimeout(timeoutId);
-    console.error("CL fetch error:", err);
-    clLoading.hidden = true;
-    clError.hidden = false;
+    loadingNode.hidden = true;
+    loadingNode.style.display = "none";
+    errorNode.hidden = true;
+    renderChampionsLeagueMatches(matchesNode, upcomingEvents);
+  } catch (error) {
+    window.clearTimeout(timeoutId);
+    console.error("Champions League widget failed:", error);
+    loadingNode.hidden = true;
+    loadingNode.style.display = "none";
+    errorNode.hidden = false;
   }
 }
 
-loadCLFixtures();
+initThemeToggle();
+initFadeIn();
+initProjectFilters();
+initContactForm();
+initChampionsLeagueWidget();

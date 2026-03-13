@@ -8,12 +8,11 @@
 
 ## Tools Used
 
-### 1. Antigravity (AI Coding Assistant — Google DeepMind)
-**Role:** Primary development assistant
+### Antigravity & CODEX 
 
-**How it was used:**
+**How they were used:**
 - Helped plan and break down the assignment requirements into a structured checklist (`PLAN.md`)
-- Generated the complete updated `index.html` structure including:
+- Help in updating `index.html` structure including:
   - Filter tab buttons with `data-filter` attributes
   - `data-category` tags on each project card
   - Champions League widget section with loading/error states
@@ -25,22 +24,13 @@
   - Profile image pulse animation (`@keyframes profilePulse`)
   - CL match card grid layout and spinner
   - Inline form error and success banner styles
-- Wrote `js/script.js` to add:
+- Help in `js/script.js` to add:
   - `IntersectionObserver` for scroll-triggered fade-in
   - Project filter logic with empty-state message
   - Full inline form validation (name, email regex, message length)
   - CL fixtures fetcher using `fetch()` with loading/error handling
 - Helped update all documentation files
 
-### 2. football-data.org API
-**Role:** External data source (not an AI tool, but an external service)
-
-**How it was used:**
-- Free-tier API to fetch UEFA Champions League fixtures
-- Endpoint used: `GET /v4/competitions/CL/matches`
-- Returns match data including teams, stage, date, and score
-
----
 
 ## Responsible use & modifications
 

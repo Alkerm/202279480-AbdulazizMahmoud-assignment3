@@ -551,10 +551,31 @@ textarea.invalid {
   font-size: 1rem;
 }
 
+.cl-team {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+.cl-team--away {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.cl-team-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex: 0 0 24px;
+}
+
 .cl-vs {
   font-size: 0.8rem;
   color: var(--muted);
   font-weight: 400;
+  flex: 0 0 auto;
 }
 
 .cl-date {
@@ -563,6 +584,32 @@ textarea.invalid {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.cl-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cl-time,
+.cl-venue {
+  font-size: 0.85rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cl-time::before {
+  content: "⏰";
+  font-size: 0.9rem;
+}
+
+.cl-venue::before {
+  content: "📍";
+  font-size: 0.9rem;
 }
 
 .cl-date::before { content: "📅"; font-size: 0.9rem; }
@@ -581,6 +628,12 @@ textarea.invalid {
   gap: 12px;
   color: var(--muted);
   padding: 30px 0;
+}
+
+.cl-loading[hidden],
+.cl-error[hidden],
+.form-success[hidden] {
+  display: none !important;
 }
 
 .cl-error {

@@ -1,147 +1,107 @@
-# Technical Documentation — Assignment 2
-
-**Student:** Abdulaziz Ayman Elkarm (202279480)  
-**Course:** Web Engineering — KFUPM
-
----
+# Technical Documentation - Assignment 2
 
 ## Overview
 
-This document describes the interactive features added in Assignment 2, building on the static portfolio from Assignment 1.
+This document summarizes the main interactive features implemented in the portfolio and how they work in the final version of the project.
 
----
+## 1. Theme Toggle
 
-## 1. Theme Toggle (Assignment 1 — enhanced)
+**Files:** `index.html`, `js/script.js`, `css/styles.css`
 
-**File:** `js/script.js`
+The theme toggle switches the page between dark and light themes by updating the `data-theme` attribute on the root `<html>` element. The selected value is saved in `localStorage` and restored on later visits.
 
-The theme toggle button switches between `data-theme="dark"` and `data-theme="light"` on the `<html>` element. The chosen theme is saved to `localStorage` and restored on every page load.
-
-```js
-const applyTheme = (theme) => {
-  root.setAttribute("data-theme", theme);
-  localStorage.setItem("theme", theme);
-  updateToggleText(theme);
-};
-```
-
----
+Key points:
+- Default theme is dark
+- Clicking the toggle swaps between dark and light
+- The button label updates to reflect the next available mode
 
 ## 2. Scroll Fade-In Animation
 
 **Files:** `js/script.js`, `css/styles.css`
 
-All elements with class `fade-in` start invisible (`opacity: 0`, `translateY(24px)`). An `IntersectionObserver` watches each element and adds the class `visible` when at least 15% of the element enters the viewport, triggering a CSS transition.
+Elements with the `.fade-in` class are observed using `IntersectionObserver`. When they enter the viewport, the `.visible` class is toggled to trigger the CSS transition.
 
-```js
-const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-        observer.unobserve(entry.target);
-      }
-    });
-  },
-  { threshold: 0.15 }
-);
-```
-
-**Applies to:** Section headers, project cards, skill pills, contact form.
-
----
+This is used for:
+- section headers
+- project cards
+- skill items
 
 ## 3. Project Filter Tabs
 
 **Files:** `index.html`, `js/script.js`, `css/styles.css`
 
-Each project `<article>` has a `data-category` attribute (`ai`, `web`, `ml`). Four filter buttons correspond to `data-filter` values (`all`, `ai`, `web`, `ml`).
+Each project card has a `data-category` value. Filter buttons read that value and show only matching cards.
 
-When a filter button is clicked:
-1. The `active` class is moved to the clicked button
-2. Each card's `display` is toggled based on whether its category matches
-3. An `empty-state` paragraph is shown if no cards match
-4. Visible cards replay the `fadeUp` keyframe animation
+Behavior:
+- the clicked filter becomes active
+- non-matching cards are hidden
+- matching cards replay their entrance animation
+- an empty-state message appears if no cards match
 
----
-
-## 4. Champions League Live Fixtures Widget
-
-**Files:** `index.html`, `js/script.js`, `css/styles.css`  
-**API:** [football-data.org](https://www.football-data.org/) (free tier)
-
-The widget fetches UEFA Champions League matches using the `fetch()` Web API:
-
-```js
-const res = await fetch(
-  "https://api.football-data.org/v4/competitions/CL/matches?status=SCHEDULED,LIVE,IN_PLAY,PAUSED,FINISHED&limit=12",
-  { headers: { "X-Auth-Token": CL_API_KEY } }
-);
-```
-
-**States handled:**
-| State | Behaviour |
-|---|---|
-| Loading | Spinning CSS animation + "Loading fixtures…" text |
-| Success | Renders match cards with team names, stage, date |
-| Finished match | Shows full-time score |
-| API error | Shows friendly error message |
-| No key set | Shows a developer placeholder message |
-
-Match cards are sorted by date ascending and display: stage label, home team vs away team, date in KSA timezone, and score (if the match is finished).
-
----
-
-## 5. Contact Form — Inline Validation
+## 4. Contact Form Validation
 
 **Files:** `index.html`, `js/script.js`, `css/styles.css`
 
-The `<form>` has `novalidate` set so browser-native validation is disabled, and all validation is done with JavaScript for full UI control.
+The contact form is validated on the client side with JavaScript.
 
-**Validation rules:**
-| Field | Rule |
-|---|---|
-| Name | Must not be empty |
-| Email | Must match `/^[^\s@]+@[^\s@]+\.[^\s@]+$/` |
-| Message | Must be ≥ 10 characters |
+Validation rules:
+- name must not be empty
+- email must match a basic email pattern
+- message must be at least 10 characters
 
-On invalid fields: a red `.field-error` span is shown beneath the input and an `.invalid` CSS class adds a red border + glow.
+Behavior:
+- invalid fields receive the `.invalid` class
+- error messages are shown below the corresponding input
+- a success message appears when submission passes validation
 
-On success: the form resets and a green `.form-success` banner slides in using a CSS `@keyframes slideDown` animation. It auto-hides after 5 seconds.
+## 5. Champions League Fixtures Widget
 
----
+**Files:** `index.html`, `js/script.js`, `css/styles.css`
 
-## 6. Card Hover Micro-animations
+The widget fetches UEFA Champions League data from ESPN's public soccer API using `fetch()`.
+
+Current implementation details:
+- requests a season date range instead of the default daily scoreboard
+- filters the result to upcoming fixtures only
+- excludes placeholder matchups unless both teams have assigned logos
+- displays the two team names with logos
+- displays match date, kickoff time in KSA, and venue when available
+- hides the loading indicator once data is loaded or if an error occurs
+
+Example request pattern:
+
+```js
+const response = await fetch(
+  `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard?dates=${seasonRange}&limit=200&lang=en&region=gb&league=uefa.champions`
+);
+```
+
+Handled states:
+- loading
+- successful data render
+- no available fixtures after filtering
+- API / network failure
+
+## 6. Card Hover Effects
 
 **File:** `css/styles.css`
 
-Project cards have:
-- `translateY(-6px)` lift on hover
-- Cyan border glow (`rgba(103, 210, 255, 0.35)`)
-- Zoomed card image (`scale(1.06)`) via a transition on the `<img>` inside
+Project cards use hover effects to make the UI feel more interactive.
 
-```css
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 24px 50px rgba(103, 210, 255, 0.18);
-  border-color: rgba(103, 210, 255, 0.35);
-}
-.card:hover .card-image img {
-  transform: scale(1.06);
-}
-```
-
----
+Effects include:
+- slight upward movement
+- accent-colored shadow glow
+- image zoom inside the card preview
 
 ## Technologies Used
 
 | Technology | Purpose |
 |---|---|
-| HTML5 | Semantic structure |
-| CSS3 | Styling, animations, CSS custom properties |
-| Vanilla JavaScript | All interactivity |
-| `IntersectionObserver` API | Scroll-triggered animations |
-| `fetch()` API | Async data fetching |
-| `localStorage` | Theme preference persistence |
-| football-data.org REST API | Champions League fixture data |
-| Google Fonts | Typography (Space Grotesk, IBM Plex Serif) |
+| HTML5 | Page structure and semantics |
+| CSS3 | Layout, theming, transitions, and responsive styling |
+| Vanilla JavaScript | Interactivity and API integration |
+| `IntersectionObserver` | Scroll-based reveal animations |
+| `fetch()` | Loading external fixture data |
+| `localStorage` | Persisting the selected theme |
+| ESPN public API | Champions League fixture data |
+| Google Fonts | Typography |
