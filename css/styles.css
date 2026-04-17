@@ -1023,6 +1023,11 @@ select.invalid {
   gap: 8px;
 }
 
+#auth-guest[hidden],
+#auth-user[hidden] {
+  display: none;
+}
+
 .auth-btn {
   padding: 7px 14px;
   border-radius: 999px;
