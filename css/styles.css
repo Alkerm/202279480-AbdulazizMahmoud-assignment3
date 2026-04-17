@@ -1072,6 +1072,10 @@ select.invalid {
   z-index: 100;
 }
 
+.auth-popover[hidden] {
+  display: none;
+}
+
 .auth-popover-title {
   font-size: 0.9rem;
   font-weight: 600;
