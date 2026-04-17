@@ -455,9 +455,6 @@ async function initGitHubRepos() {
     gridNode.innerHTML = filtered
       .map((repo, index) => {
         const langColor = LANG_COLORS[repo.language] || "var(--muted)";
-        const desc = repo.description
-          ? repo.description
-          : "No description provided.";
         const stars = repo.stargazers_count;
         const forks = repo.forks_count;
         const lang = repo.language || "";
@@ -470,7 +467,6 @@ async function initGitHubRepos() {
               </svg>
               <a class="gh-card-name" href="${repo.html_url}" target="_blank" rel="noreferrer">${repo.name}</a>
             </div>
-            <p class="gh-card-desc">${desc}</p>
             <div class="gh-card-footer">
               ${lang ? `<span class="gh-meta-item"><span class="gh-lang-dot" style="background:${langColor}"></span>${lang}</span>` : ""}
               ${stars > 0 ? `<span class="gh-meta-item">⭐ ${stars}</span>` : ""}
