@@ -679,6 +679,246 @@ textarea.invalid {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Countdown ── */
+.countdown-section {
+  padding: 28px 0;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+}
+
+.countdown-label {
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+
+.countdown-grid {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 22px;
+  min-width: 84px;
+  box-shadow: var(--shadow);
+  transition: border-color 0.2s ease;
+}
+
+.countdown-unit:hover {
+  border-color: rgba(103, 210, 255, 0.4);
+}
+
+.countdown-val {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-key {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+/* ── Filter bar ── */
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-row-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  min-width: 76px;
+}
+
+/* Sort select */
+#sort-select {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+#sort-select:hover {
+  background: var(--surface-strong);
+}
+
+#sort-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Style native select in contact form the same way */
+select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: var(--bg-alt);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(103, 210, 255, 0.15);
+}
+
+select.invalid {
+  border-color: #f87171;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
+}
+
+/* ── Difficulty badges ── */
+.card-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.diff-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.diff-badge--beginner {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.diff-badge--intermediate {
+  background: rgba(234, 179, 8, 0.1);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.diff-badge--advanced {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* ── GitHub Repo Cards ── */
+.gh-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  animation: fadeUp 0.4s ease both;
+}
+
+.gh-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 50px rgba(103, 210, 255, 0.18);
+  border-color: rgba(103, 210, 255, 0.35);
+}
+
+.gh-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gh-card-header svg {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.gh-card-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gh-card-name:hover {
+  text-decoration: underline;
+}
+
+.gh-card-desc {
+  font-size: 0.9rem;
+  color: var(--muted);
+  flex: 1;
+  line-height: 1.5;
+}
+
+.gh-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.gh-lang-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.gh-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
 /* ── Footer ── */
 .site-footer {
   padding: 24px 0 40px;
@@ -766,4 +1006,160 @@ textarea.invalid {
   .card-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ── Auth Widget ── */
+.auth-widget {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#auth-guest,
+#auth-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-btn {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.auth-btn:hover {
+  background: var(--surface-strong);
+}
+
+.auth-btn--outline {
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #f87171;
+}
+
+.auth-btn--outline:hover {
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.auth-greeting {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.auth-popover {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  display: grid;
+  gap: 10px;
+  min-width: 220px;
+  box-shadow: var(--shadow);
+  z-index: 100;
+}
+
+.auth-popover-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.auth-name-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease;
+}
+
+.auth-name-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ── Section Toggle Buttons ── */
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.section-toggle-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.section-toggle-btn:hover {
+  background: var(--surface-strong);
+  color: var(--text);
+}
+
+.toggle-chevron {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  line-height: 1;
+}
+
+.toggle-chevron.collapsed {
+  transform: rotate(-90deg);
+}
+
+.section-body {
+  transition: opacity 0.25s ease;
+}
+
+.section-body.hidden {
+  display: none;
+}
+
+/* ── Performance hints ── */
+
+/* GPU-composited layers for animated cards */
+.card,
+.gh-card,
+.cl-match-card {
+  will-change: transform;
+}
+
+/* Skip rendering off-screen sections until scrolled into view */
+.section,
+.countdown-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 600px;
+}
+
+/* Isolate hero from rest-of-page reflow */
+.hero {
+  contain: layout style;
 }

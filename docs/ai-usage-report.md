@@ -8,22 +8,35 @@
 ### Claude & CODEX 
 
 **How they were used:**
-- Helped plan and break down the assignment requirements into a structured checklist (`PLAN.md`)
+- Helped plan and break down the assignment 3 requirements into actionable tasks
 - Help in updating `index.html` structure including:
-  - Filter tab buttons with `data-filter` attributes
-  - `data-category` tags on each project card
-  - Champions League widget section with loading/error states
-  - Redesigned contact form with per-field `id` and error `<span>` elements
-- Rewrote `css/styles.css` to add:
-  - Filter tab styles with active state
-  - Card hover lift + glow + image zoom effects
-  - Scroll fade-in animation system using `.fade-in` / `.visible` classes
-  - Profile image pulse animation 
+  - GitHub Repositories section with loading spinner and error state
+  - Semester countdown widget (Days / Hours / Minutes / Seconds)
+  - Combined filter bar for projects: category row, difficulty row, and sort dropdown
+  - Difficulty badges (`data-difficulty`) on each project card
+  - Auth widget in the header (Sign in / greeting / Sign out + popover)
+  - Enhanced contact form with Subject dropdown and Confirm Email field
+- Rewrote and extended `css/styles.css` to add:
+  - GitHub repo card styles (`.gh-card`, language dot, meta row)
+  - Countdown unit styles (`.countdown-section`, `.countdown-val`)
+  - Filter bar layout (`.filter-bar`, `.filter-row`, `.filter-row-label`)
+  - Difficulty badge variants (`.diff-badge--beginner/intermediate/advanced`)
+  - Auth widget and popover styles
+  - Section toggle button and chevron animation
+  - Performance hints (`will-change`, `content-visibility`, `contain`)
 - Help in `js/script.js` to add:
-  - `IntersectionObserver` for scroll-triggered fade-in
-  - Project filter logic with empty-state message
-  - Full inline form validation (name, email regex, message length)
-  - CL fixtures fetcher using `fetch()` with loading/error handling
+  - `initGitHubRepos()` — fetches GitHub API, renders repo cards with language/stars/forks, with 8 s abort timeout and friendly error fallback
+  - `initCountdown()` — live `setInterval` countdown to 18 May 2026 21:00 KSA
+  - Refactored `initProjectFilters()` — combined category + difficulty filter state with sort (name A→Z, name Z→A, difficulty ↑↓) using an `applyFiltersAndSort()` function
+  - Updated `initContactForm()` — added subject and confirm-email validation, cross-field match check, and `change` event listeners
+  - `initAuth()` — login/logout state stored in `localStorage("visitorName")`, popover with name input, greeting restored on reload
+  - `initSectionToggles()` — dynamically injects collapse buttons into every section heading; collapsed state persisted in `localStorage("sectionState")`
+- Applied HTML performance optimizations:
+  - `defer` on the script tag to eliminate render-blocking JS
+  - `<link rel="preload">` for the hero profile image (LCP improvement)
+  - `<link rel="dns-prefetch/preconnect">` for GitHub and ESPN APIs
+  - `loading="lazy"` and `decoding="async"` on all below-fold images
+  - Explicit `width`/`height` on all images to prevent layout shift (CLS)
 - Helped update all documentation files
 
 
@@ -43,12 +56,15 @@ All AI-generated code in this project was treated as a starting point, not a fin
 
 Through building this assignment with AI assistance, the following concepts were actively learned and applied:
 
-- **`fetch()` and async/await** — how to make HTTP requests in the browser, handle promises, and manage loading/error states cleanly
-- **Form validation with JavaScript** — why `novalidate` is used alongside custom JS validation, and how to give per-field feedback without browser-native alerts
-- **CSS custom properties (variables)** — how a design token system enables seamless dark/light theming across the entire site
-- **CSS `@keyframes` animations** — the difference between transitions (state changes) and keyframe animations (looping or one-shot effects)
-- **DOM data attributes (`data-*`)** — how to store metadata on HTML elements and read it in JavaScript for filtering logic
-- **REST API usage** — how to authenticate with an `X-Auth-Token` header and parse JSON responses from a public API
+- **GitHub REST API** — how to fetch public user data without authentication, read JSON fields like `stargazers_count`, `language`, and `html_url`, and filter out forked repos before rendering
+- **`AbortController` and fetch timeouts** — how to cancel a `fetch()` request after a set delay using `AbortController.signal`, preventing the UI from hanging indefinitely on slow networks
+- **`localStorage` for state persistence** — how to save and restore application state (theme, visitor name, collapsed sections) across page reloads using `JSON.stringify` / `JSON.parse`
+- **Multi-condition filtering and sorting** — how to combine independent filter states (category AND difficulty) and apply a dynamic sort on the resulting visible subset, re-appending DOM nodes in the correct order
+- **Cross-field form validation** — how to validate one field against the live value of another (confirm email matching email) and re-trigger validation when the source field changes
+- **`setInterval` countdown logic** — how to compute the difference between `Date.now()` and a fixed target timestamp and break it into days, hours, minutes, and seconds with `padStart` formatting
+- **Browser performance APIs** — how `loading="lazy"`, `decoding="async"`, `fetchpriority`, `<link rel="preload">`, and `defer` each target a different bottleneck in the page load pipeline
+- **CSS `content-visibility` and `contain`** — how the browser can skip layout and paint for off-screen sections entirely, and how `contain: layout style` isolates a section's reflow from the rest of the document
+- **Dynamic DOM construction** — how to build and inject elements entirely in JavaScript (`createElement`, `insertBefore`, `appendChild`) to add UI features without modifying the base HTML
 
 ---
 

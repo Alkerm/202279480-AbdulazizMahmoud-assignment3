@@ -1,5 +1,26 @@
+/**
+ * script.js — Portfolio interactive logic
+ *
+ * Sections (in order):
+ *  1. Theme toggle      — dark/light mode with localStorage persistence
+ *  2. Fade-in           — scroll-triggered animations via IntersectionObserver
+ *  3. Project filters   — combined category + difficulty filter with sort
+ *  4. Contact form      — multi-field inline validation including cross-field check
+ *  5. UCL widget        — ESPN API fetch for upcoming Champions League fixtures
+ *  6. GitHub widget     — GitHub API fetch for public repositories
+ *  7. Countdown         — live timer to end-of-semester (18 May 2026 21:00 KSA)
+ *  8. Auth              — visitor sign-in / sign-out with localStorage
+ *  9. Section toggles   — collapsible sections with localStorage persistence
+ */
+
+// Cached reference to <html> element used for data-theme switching
 const root = document.documentElement;
 
+/* ─────────────────────────────────────────
+ * 1. THEME TOGGLE
+ * Reads saved preference from localStorage on load.
+ * Toggles data-theme on <html> and persists the choice.
+ * ───────────────────────────────────────── */
 function initThemeToggle() {
   const toggleButton = document.getElementById("theme-toggle");
   if (!toggleButton) {
@@ -25,6 +46,12 @@ function initThemeToggle() {
   });
 }
 
+/* ─────────────────────────────────────────
+ * 2. SCROLL FADE-IN
+ * Adds/removes .visible on elements with .fade-in
+ * as they enter/leave the viewport.
+ * Threshold 0.2 = element must be 20% visible to trigger.
+ * ───────────────────────────────────────── */
 function initFadeIn() {
   const fadeElements = document.querySelectorAll(".fade-in");
   if (!fadeElements.length || typeof IntersectionObserver === "undefined") {
@@ -43,82 +70,111 @@ function initFadeIn() {
   fadeElements.forEach((element) => observer.observe(element));
 }
 
+/* ─────────────────────────────────────────
+ * 3. PROJECT FILTERS + SORT
+ * Maintains three independent state variables:
+ *   activeCat  — selected category  (data-filter buttons)
+ *   activeDiff — selected difficulty (data-diff buttons)
+ *   activeSort — selected sort order (sort-select dropdown)
+ * applyFiltersAndSort() combines all three and re-appends
+ * visible cards in sorted order with a staggered animation.
+ * ───────────────────────────────────────── */
 function initProjectFilters() {
-  const filterButtons = document.querySelectorAll(".filter-btn");
-  const cards = document.querySelectorAll("#project-grid .card");
+  const grid = document.getElementById("project-grid");
   const emptyState = document.getElementById("no-projects");
+  if (!grid || !emptyState) return;
 
-  if (!filterButtons.length || !cards.length || !emptyState) {
-    return;
+  let activeCat = "all";
+  let activeDiff = "all";
+  let activeSort = "default";
+  // Numeric weights used when sorting by difficulty
+  const diffOrder = { beginner: 1, intermediate: 2, advanced: 3 };
+
+  function applyFiltersAndSort() {
+    const cards = Array.from(grid.querySelectorAll(".card"));
+    const visible = [];
+
+    cards.forEach((card) => {
+      const catMatch = activeCat === "all" || card.dataset.category === activeCat;
+      const diffMatch = activeDiff === "all" || card.dataset.difficulty === activeDiff;
+      card.style.display = catMatch && diffMatch ? "" : "none";
+      if (catMatch && diffMatch) visible.push(card);
+    });
+
+    if (activeSort === "name-asc") {
+      visible.sort((a, b) => a.dataset.name.localeCompare(b.dataset.name));
+    } else if (activeSort === "name-desc") {
+      visible.sort((a, b) => b.dataset.name.localeCompare(a.dataset.name));
+    } else if (activeSort === "diff-asc") {
+      visible.sort((a, b) => (diffOrder[a.dataset.difficulty] || 0) - (diffOrder[b.dataset.difficulty] || 0));
+    } else if (activeSort === "diff-desc") {
+      visible.sort((a, b) => (diffOrder[b.dataset.difficulty] || 0) - (diffOrder[a.dataset.difficulty] || 0));
+    }
+
+    visible.forEach((card, i) => {
+      card.style.animation = "none";
+      void card.offsetWidth; // Force reflow so the animation restarts cleanly
+      card.style.animation = `fadeUp 0.35s ease ${i * 0.08}s both`;
+      grid.appendChild(card);
+    });
+
+    emptyState.style.display = visible.length === 0 ? "block" : "none";
   }
 
-  filterButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      filterButtons.forEach((item) => item.classList.remove("active"));
-      button.classList.add("active");
-
-      const filter = button.dataset.filter;
-      let visibleCount = 0;
-
-      cards.forEach((card) => {
-        const isMatch = filter === "all" || card.dataset.category === filter;
-        card.style.display = isMatch ? "" : "none";
-
-        if (isMatch) {
-          card.style.animation = "none";
-          void card.offsetWidth;
-          card.style.animation = "fadeUp 0.35s ease both";
-          visibleCount += 1;
-        }
-      });
-
-      emptyState.style.display = visibleCount === 0 ? "block" : "none";
+  document.querySelectorAll(".filter-btn[data-filter]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn[data-filter]").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeCat = btn.dataset.filter;
+      applyFiltersAndSort();
     });
   });
+
+  document.querySelectorAll(".filter-btn[data-diff]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn[data-diff]").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeDiff = btn.dataset.diff;
+      applyFiltersAndSort();
+    });
+  });
+
+  const sortSelect = document.getElementById("sort-select");
+  if (sortSelect) {
+    sortSelect.addEventListener("change", () => {
+      activeSort = sortSelect.value;
+      applyFiltersAndSort();
+    });
+  }
 }
 
-function ensureFieldError(input) {
-  const label = input.closest("label");
-  if (!label) {
-    return null;
-  }
 
-  let errorNode = label.querySelector(".field-error");
-  if (!errorNode) {
-    errorNode = document.createElement("span");
-    errorNode.className = "field-error";
-    errorNode.setAttribute("aria-live", "polite");
-    label.appendChild(errorNode);
-  }
-
-  return errorNode;
-}
-
+/* ─────────────────────────────────────────
+ * 4. CONTACT FORM VALIDATION
+ * Validates 5 fields inline (no page reload, no alert()).
+ * confirm-email is cross-validated against email's live value.
+ * Success banner auto-hides after 5 seconds.
+ * ───────────────────────────────────────── */
 function initContactForm() {
   const form = document.querySelector(".contact-form");
-  if (!form) {
-    return;
-  }
+  if (!form) return;
 
-  const nameInput = form.querySelector('input[name="name"]');
-  const emailInput = form.querySelector('input[name="email"]');
-  const messageInput = form.querySelector('textarea[name="message"]');
+  const subjectInput  = form.querySelector('select[name="subject"]');
+  const nameInput     = form.querySelector('input[name="name"]');
+  const emailInput    = form.querySelector('input[name="email"]');
+  const confirmInput  = form.querySelector('input[name="confirm-email"]');
+  const messageInput  = form.querySelector('textarea[name="message"]');
 
-  if (!nameInput || !emailInput || !messageInput) {
-    return;
-  }
+  if (!subjectInput || !nameInput || !emailInput || !confirmInput || !messageInput) return;
 
+  // Simple RFC-style email pattern — rejects obvious typos without being too strict
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const fieldMap = [
-    { input: nameInput, validate: (value) => value.trim() ? "" : "Name is required." },
-    {
-      input: emailInput,
-      validate: (value) => emailPattern.test(value.trim()) ? "" : "Please enter a valid email address.",
-    },
-    {
-      input: messageInput,
-      validate: (value) => value.trim().length >= 10 ? "" : "Message must be at least 10 characters.",
-    },
+    { input: subjectInput,  validate: (v) => v ? "" : "Please select a subject." },
+    { input: nameInput,     validate: (v) => v.trim() ? "" : "Name is required." },
+    { input: emailInput,    validate: (v) => emailPattern.test(v.trim()) ? "" : "Please enter a valid email address." },
+    { input: confirmInput,  validate: (v) => v.trim() === emailInput.value.trim() ? "" : "Emails do not match." },
+    { input: messageInput,  validate: (v) => v.trim().length >= 10 ? "" : "Message must be at least 10 characters." },
   ];
 
   let successBox = form.querySelector(".form-success");
@@ -130,47 +186,62 @@ function initContactForm() {
     form.prepend(successBox);
   }
 
-  const setFieldState = (input, message) => {
-    const errorNode = ensureFieldError(input);
-    input.classList.toggle("invalid", Boolean(message));
-    if (errorNode) {
-      errorNode.textContent = message;
+  const ensureFieldError = (input) => {
+    const parent = input.closest("label");
+    if (!parent) return null;
+    let err = parent.querySelector(".field-error");
+    if (!err) {
+      err = document.createElement("span");
+      err.className = "field-error";
+      err.setAttribute("aria-live", "polite");
+      parent.appendChild(err);
     }
+    return err;
+  };
+
+  const setFieldState = (input, message) => {
+    const err = ensureFieldError(input);
+    input.classList.toggle("invalid", Boolean(message));
+    if (err) err.textContent = message;
   };
 
   fieldMap.forEach(({ input, validate }) => {
     ensureFieldError(input);
-    input.addEventListener("input", () => {
-      setFieldState(input, validate(input.value));
-    });
+    input.addEventListener("input", () => setFieldState(input, validate(input.value)));
+    input.addEventListener("change", () => setFieldState(input, validate(input.value)));
   });
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
+  // Re-validate confirm email whenever the email field changes
+  emailInput.addEventListener("input", () => {
+    if (confirmInput.value) {
+      setFieldState(confirmInput, confirmInput.value.trim() === emailInput.value.trim() ? "" : "Emails do not match.");
+    }
+  });
 
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
     let isValid = true;
     fieldMap.forEach(({ input, validate }) => {
-      const message = validate(input.value);
-      setFieldState(input, message);
-      if (message) {
-        isValid = false;
-      }
+      const msg = validate(input.value);
+      setFieldState(input, msg);
+      if (msg) isValid = false;
     });
-
-    if (!isValid) {
-      successBox.hidden = true;
-      return;
-    }
-
+    if (!isValid) { successBox.hidden = true; return; }
     successBox.hidden = false;
     form.reset();
     fieldMap.forEach(({ input }) => setFieldState(input, ""));
-    window.setTimeout(() => {
-      successBox.hidden = true;
-    }, 5000);
+    window.setTimeout(() => { successBox.hidden = true; }, 5000);
   });
 }
 
+/* ─────────────────────────────────────────
+ * 5. UEFA CHAMPIONS LEAGUE WIDGET
+ * Fetches upcoming fixtures from the ESPN public API.
+ * No API key required. Uses AbortController for an 8 s timeout.
+ * Filters to future events only, sorted by date ascending.
+ * ───────────────────────────────────────── */
+
+// Format a UTC date string to a readable day/date in KSA timezone
 function formatMatchDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleString("en-GB", {
@@ -190,6 +261,7 @@ function formatMatchTime(dateString) {
   }) + " KSA";
 }
 
+// Build the ESPN API date range for the current UCL season (e.g. "20240901-20250630")
 function getChampionsLeagueSeasonRange() {
   const now = new Date();
   const year = now.getUTCFullYear();
@@ -200,6 +272,8 @@ function getChampionsLeagueSeasonRange() {
   return `${seasonStartYear}0901-${seasonEndYear}0630`;
 }
 
+// Extract home/away team data + logos from an ESPN event object.
+// Returns null if any required field is missing (skips incomplete fixtures).
 function getAssignedTeams(event) {
   const competition = event.competitions?.[0];
   const competitors = competition?.competitors || [];
@@ -324,8 +398,260 @@ async function initChampionsLeagueWidget() {
   }
 }
 
-initThemeToggle();
-initFadeIn();
-initProjectFilters();
-initContactForm();
-initChampionsLeagueWidget();
+/* ─────────────────────────────────────────
+ * 6. GITHUB REPOSITORIES WIDGET
+ * Fetches public repos for user "Alkerm" via the GitHub REST API.
+ * Filters out forks. Renders cards with language dot, stars, forks.
+ * Uses AbortController for an 8 s timeout.
+ * ───────────────────────────────────────── */
+
+// Maps GitHub language names to their official brand colours
+const LANG_COLORS = {
+  JavaScript: "#f1e05a",
+  TypeScript: "#3178c6",
+  Python: "#3572A5",
+  HTML: "#e34c26",
+  CSS: "#563d7c",
+  "C#": "#178600",
+  Java: "#b07219",
+  Shell: "#89e051",
+};
+
+async function initGitHubRepos() {
+  const loadingNode = document.getElementById("gh-loading");
+  const gridNode = document.getElementById("gh-grid");
+  const errorNode = document.getElementById("gh-error");
+
+  if (!loadingNode || !gridNode || !errorNode) return;
+
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), 8000);
+
+  try {
+    const response = await fetch(
+      "https://api.github.com/users/Alkerm/repos?sort=updated&per_page=12",
+      {
+        signal: controller.signal,
+        headers: { Accept: "application/vnd.github+json" },
+      }
+    );
+    window.clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`GitHub API error ${response.status}`);
+    }
+
+    const repos = await response.json();
+    const filtered = repos.filter((r) => !r.fork);
+
+    loadingNode.hidden = true;
+    loadingNode.style.display = "none";
+
+    if (!filtered.length) {
+      gridNode.innerHTML = '<p style="color:var(--muted)">No public repositories found.</p>';
+      return;
+    }
+
+    gridNode.innerHTML = filtered
+      .map((repo, index) => {
+        const langColor = LANG_COLORS[repo.language] || "var(--muted)";
+        const desc = repo.description
+          ? repo.description
+          : "No description provided.";
+        const stars = repo.stargazers_count;
+        const forks = repo.forks_count;
+        const lang = repo.language || "";
+
+        return `
+          <article class="gh-card" style="animation-delay:${index * 60}ms">
+            <div class="gh-card-header">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8Z"/>
+              </svg>
+              <a class="gh-card-name" href="${repo.html_url}" target="_blank" rel="noreferrer">${repo.name}</a>
+            </div>
+            <p class="gh-card-desc">${desc}</p>
+            <div class="gh-card-footer">
+              ${lang ? `<span class="gh-meta-item"><span class="gh-lang-dot" style="background:${langColor}"></span>${lang}</span>` : ""}
+              ${stars > 0 ? `<span class="gh-meta-item">⭐ ${stars}</span>` : ""}
+              ${forks > 0 ? `<span class="gh-meta-item">🍴 ${forks}</span>` : ""}
+            </div>
+          </article>
+        `;
+      })
+      .join("");
+
+  } catch (error) {
+    window.clearTimeout(timeoutId);
+    console.error("GitHub widget failed:", error);
+    loadingNode.hidden = true;
+    loadingNode.style.display = "none";
+    errorNode.hidden = false;
+  }
+}
+
+/* ─────────────────────────────────────────
+ * 7. SEMESTER COUNTDOWN
+ * Counts down to 18 May 2026 at 21:00 KSA (UTC+3).
+ * Updates every second via setInterval.
+ * Displays zero-padded DD / HH / MM / SS values.
+ * ───────────────────────────────────────── */
+function initCountdown() {
+  const target = new Date("2026-05-18T21:00:00+03:00");
+  const daysEl    = document.getElementById("cd-days");
+  const hoursEl   = document.getElementById("cd-hours");
+  const minutesEl = document.getElementById("cd-minutes");
+  const secondsEl = document.getElementById("cd-seconds");
+  if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
+
+  function tick() {
+    const diff = target - Date.now();
+    if (diff <= 0) {
+      daysEl.textContent = hoursEl.textContent = minutesEl.textContent = secondsEl.textContent = "00";
+      return;
+    }
+    // Zero-pad single digits so the display is always 2 characters wide
+    const pad = (n) => String(Math.floor(n)).padStart(2, "0");
+    daysEl.textContent    = pad(diff / 86400000);
+    hoursEl.textContent   = pad((diff % 86400000) / 3600000);
+    minutesEl.textContent = pad((diff % 3600000) / 60000);
+    secondsEl.textContent = pad((diff % 60000) / 1000);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ── State: Login / Logout / Visitor Name ── */
+function initAuth() {
+  const widget      = document.getElementById("auth-widget");
+  const guestEl     = document.getElementById("auth-guest");
+  const userEl      = document.getElementById("auth-user");
+  const greetingEl  = document.getElementById("auth-greeting");
+  const signinBtn   = document.getElementById("auth-signin-btn");
+  const logoutBtn   = document.getElementById("auth-logout-btn");
+  const popover     = document.getElementById("auth-popover");
+  const nameInput   = document.getElementById("auth-name-input");
+  const submitBtn   = document.getElementById("auth-submit-btn");
+
+  if (!widget || !guestEl || !userEl) return;
+
+  function showUser(name) {
+    greetingEl.textContent = `👋 Hi, ${name}!`;
+    guestEl.hidden = true;
+    userEl.hidden  = false;
+    if (popover) popover.hidden = true;
+  }
+
+  function clearUser() {
+    localStorage.removeItem("visitorName");
+    guestEl.hidden = false;
+    userEl.hidden  = true;
+  }
+
+  // Restore from localStorage
+  const stored = localStorage.getItem("visitorName");
+  if (stored) showUser(stored);
+
+  signinBtn.addEventListener("click", () => {
+    popover.hidden = !popover.hidden;
+    if (!popover.hidden) nameInput.focus();
+  });
+
+  submitBtn.addEventListener("click", () => {
+    const name = nameInput.value.trim() || "Visitor";
+    localStorage.setItem("visitorName", name);
+    showUser(name);
+  });
+
+  nameInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submitBtn.click();
+  });
+
+  logoutBtn.addEventListener("click", clearUser);
+
+  // Close popover when clicking outside the widget
+  document.addEventListener("click", (e) => {
+    if (!widget.contains(e.target)) popover.hidden = true;
+  });
+}
+
+/* ── State: Show / Hide Sections ── */
+/* ─────────────────────────────────────────
+ * 9. SECTION TOGGLES
+ * Dynamically injects a collapse button into each section heading.
+ * Wraps all non-header content in a .section-body div.
+ * Collapsed state is persisted in localStorage("sectionState").
+ * ───────────────────────────────────────── */
+function initSectionToggles() {
+  const sectionIds = ["projects", "skills", "github", "cl-widget", "contact"];
+  const savedState = JSON.parse(localStorage.getItem("sectionState") || "{}");
+
+  sectionIds.forEach((id) => {
+    const section = document.getElementById(id);
+    if (!section) return;
+
+    const header = section.querySelector(".section-header");
+    if (!header) return;
+
+    const h2 = header.querySelector("h2");
+    if (!h2) return;
+
+    // Wrap h2 in a flex row with the toggle button
+    const row = document.createElement("div");
+    row.className = "section-title-row";
+    h2.parentNode.insertBefore(row, h2);
+    row.appendChild(h2);
+
+    const btn = document.createElement("button");
+    btn.className = "section-toggle-btn";
+    btn.type = "button";
+    btn.setAttribute("aria-label", "Toggle section visibility");
+    btn.innerHTML = '<span class="toggle-chevron" aria-hidden="true">▾</span>';
+    row.appendChild(btn);
+
+    const chevron = btn.querySelector(".toggle-chevron");
+
+    // Wrap all content after header in a section-body div
+    const container = header.closest(".container");
+    if (!container) return;
+
+    const body = document.createElement("div");
+    body.className = "section-body";
+
+    const siblings = [];
+    let node = header.nextElementSibling;
+    while (node) { siblings.push(node); node = node.nextElementSibling; }
+    siblings.forEach((el) => body.appendChild(el));
+    container.appendChild(body);
+
+    // Apply saved collapsed state
+    if (savedState[id] === true) {
+      body.classList.add("hidden");
+      chevron.classList.add("collapsed");
+    }
+
+    btn.addEventListener("click", () => {
+      const isHidden = body.classList.toggle("hidden");
+      chevron.classList.toggle("collapsed", isHidden);
+      savedState[id] = isHidden;
+      localStorage.setItem("sectionState", JSON.stringify(savedState));
+    });
+  });
+}
+
+/* ─────────────────────────────────────────
+ * INITIALISATION
+ * Each function is self-contained and guards against missing DOM nodes.
+ * Order matters: theme and fade-in run before API calls so the page
+ * is interactive immediately while network requests complete in the background.
+ * ───────────────────────────────────────── */
+initThemeToggle();          // Apply saved theme before first paint
+initFadeIn();               // Register scroll-animation observer
+initProjectFilters();       // Attach filter/sort event listeners
+initContactForm();          // Attach form validation
+initCountdown();            // Start semester countdown ticker
+initAuth();                 // Restore visitor login state
+initSectionToggles();       // Inject section collapse buttons
+initGitHubRepos();          // Fetch GitHub repos (async)
+initChampionsLeagueWidget(); // Fetch UCL fixtures (async)

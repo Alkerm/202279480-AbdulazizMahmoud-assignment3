@@ -14,7 +14,13 @@
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/styles.css?v=3" />
+    <!-- Performance: DNS prefetch for external APIs -->
+    <link rel="dns-prefetch" href="https://api.github.com" />
+    <link rel="dns-prefetch" href="https://site.api.espn.com" />
+    <link rel="preconnect" href="https://api.github.com" />
+    <!-- Preload above-the-fold hero image -->
+    <link rel="preload" href="assets/images/personal_pic.jpeg" as="image" fetchpriority="high" />
+    <link rel="stylesheet" href="css/styles.css?v=4" />
   </head>
   <body>
     <!-- Decorative background elements -->
@@ -35,10 +41,27 @@
           <a href="#about">About</a>
           <a href="#projects">Projects</a>
           <a href="#skills">Skills</a>
+          <a href="#github">GitHub</a>
           <a href="#cl-widget">UCL</a>
           <a href="#contact">Contact</a>
         </nav>
         <button id="theme-toggle" class="theme-toggle" type="button">Light mode</button>
+
+        <!-- Auth / visitor widget -->
+        <div class="auth-widget" id="auth-widget">
+          <div id="auth-guest">
+            <button class="auth-btn" id="auth-signin-btn" type="button">👤 Sign in</button>
+          </div>
+          <div id="auth-user" hidden>
+            <span class="auth-greeting" id="auth-greeting"></span>
+            <button class="auth-btn auth-btn--outline" id="auth-logout-btn" type="button">Sign out</button>
+          </div>
+          <div class="auth-popover" id="auth-popover" hidden>
+            <p class="auth-popover-title">What's your name?</p>
+            <input class="auth-name-input" id="auth-name-input" type="text" placeholder="Your name" maxlength="30" />
+            <button class="btn" id="auth-submit-btn" type="button">Let's go!</button>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -70,7 +93,7 @@
           </div>
           <div class="hero-card">
             <div class="hero-card-image">
-              <img src="assets\images\personal_pic.jpeg" alt="Abdulaziz Elkarm profile picture" />
+              <img src="assets/images/personal_pic.jpeg" alt="Abdulaziz Elkarm profile picture" fetchpriority="high" decoding="async" width="200" height="200" />
             </div>
             <div class="hero-card-body">
               <h2>Abdulaziz Ayman Elkarm</h2>
@@ -82,6 +105,19 @@
                 <li><a href="https://linkedin.com/in/abdulaziz-elkarm-b37892293" class="btn btn-small" target="_blank" rel="noreferrer">LinkedIn</a></li>
               </ul>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Semester Countdown -->
+      <section class="countdown-section" id="countdown">
+        <div class="container">
+          <p class="countdown-label">⏳ Countdown to end of semester &mdash; 18 May 2026</p>
+          <div class="countdown-grid">
+            <div class="countdown-unit"><span class="countdown-val" id="cd-days">--</span><span class="countdown-key">Days</span></div>
+            <div class="countdown-unit"><span class="countdown-val" id="cd-hours">--</span><span class="countdown-key">Hours</span></div>
+            <div class="countdown-unit"><span class="countdown-val" id="cd-minutes">--</span><span class="countdown-key">Minutes</span></div>
+            <div class="countdown-unit"><span class="countdown-val" id="cd-seconds">--</span><span class="countdown-key">Seconds</span></div>
           </div>
         </div>
       </section>
@@ -102,41 +138,43 @@
           </div>
 
           <div class="card-grid" id="project-grid">
-            <article class="card fade-in" data-category="ai">
+            <article class="card fade-in" data-category="ai" data-difficulty="advanced" data-date="2024-06" data-name="AI Superhero Face Transformation System">
               <div class="card-image">
-                <img src="assets/images/Face-Swap.png" alt="AI Superhero face transformation preview" />
+                <img src="assets/images/Face-Swap.png" alt="AI Superhero face transformation preview" loading="lazy" decoding="async" width="600" height="200" />
               </div>
               <div class="card-body">
-                <span class="card-tag">AI</span>
+                <div class="card-tags">
+                  <span class="card-tag">AI</span>
+                  <span class="diff-badge diff-badge--advanced">🔴 Advanced</span>
+                </div>
                 <h3>AI Superhero Face Transformation System</h3>
-                <p>
-                  Developed a full-stack AI face-merging application for hospital pediatric engagement, building an interactive HTML5/CSS3/Vanilla JS frontend and a Python/Flask backend integrated with OpenCV and Replicate API for automated face detection and high-fidelity blending.
-                </p>
+                <p>Developed a full-stack AI face-merging application for hospital pediatric engagement, building an interactive HTML5/CSS3/Vanilla JS frontend and a Python/Flask backend integrated with OpenCV and Replicate API for automated face detection and high-fidelity blending.</p>
               </div>
             </article>
-            <article class="card fade-in" data-category="web">
+            <article class="card fade-in" data-category="web" data-difficulty="intermediate" data-date="2024-03" data-name="SwipePitch — AI-Powered Fintech Platform">
               <div class="card-image">
-                <img src="assets/images/Pitch1.jpeg" alt="SwipePitch interface concept preview" />
+                <img src="assets/images/Pitch1.jpeg" alt="SwipePitch interface concept preview" loading="lazy" decoding="async" width="600" height="200" />
               </div>
               <div class="card-body">
-                <span class="card-tag">Web</span>
+                <div class="card-tags">
+                  <span class="card-tag">Web</span>
+                  <span class="diff-badge diff-badge--intermediate">🟡 Intermediate</span>
+                </div>
                 <h3>SwipePitch — AI-Powered Fintech Platform</h3>
-                <p>
-                  Secured 1st place at the ByteBank Fintech Hackathon, outperforming 20+ teams with a swipe-based investing platform designed to make discovering and investing in small-scale startups intuitive and accessible. Implemented AI-powered recommendations based on user behavior and delivered a functional product in 48 hours.
-                </p>
+                <p>Secured 1st place at the ByteBank Fintech Hackathon, outperforming 20+ teams with a swipe-based investing platform designed to make discovering and investing in small-scale startups intuitive and accessible. Implemented AI-powered recommendations based on user behavior and delivered a functional product in 48 hours.</p>
               </div>
             </article>
-            <article class="card fade-in" data-category="ai">
+            <article class="card fade-in" data-category="ai" data-difficulty="beginner" data-date="2024-09" data-name="Maternal Health Risk Classification">
               <div class="card-image">
-                <img src="assets/images/292Project.jpeg" alt="Maternal health risk classification project" />
+                <img src="assets/images/292Project.jpeg" alt="Maternal health risk classification project" loading="lazy" decoding="async" width="600" height="200" />
               </div>
               <div class="card-body">
-                <span class="card-tag">ML</span>
+                <div class="card-tags">
+                  <span class="card-tag">ML</span>
+                  <span class="diff-badge diff-badge--beginner">🟢 Beginner</span>
+                </div>
                 <h3>Maternal Health Risk Classification</h3>
-                <p>
-                  Compared SVM, KNN, and MLP models to classify maternal health risk levels after
-                  cleaning and engineering clinical features.
-                </p>
+                <p>Compared SVM, KNN, and MLP models to classify maternal health risk levels after cleaning and engineering clinical features.</p>
               </div>
             </article>
           </div>
@@ -172,6 +210,23 @@
         </div>
       </section>
 
+      <!-- GitHub Repositories -->
+      <section class="section section-alt" id="github">
+        <div class="container">
+          <div class="section-header fade-in">
+            <h2>GitHub repositories</h2>
+            <p>A live snapshot of my public work — fetched directly from the GitHub API.</p>
+          </div>
+          <div id="gh-content">
+            <div class="cl-loading" id="gh-loading" aria-live="polite">
+              <span class="spinner" aria-hidden="true"></span> Loading repositories…
+            </div>
+            <div class="card-grid" id="gh-grid"></div>
+            <p class="cl-error" id="gh-error" hidden>⚠️ Couldn't load repositories right now. Check back later!</p>
+          </div>
+        </div>
+      </section>
+
       <!-- Champions League Widget -->
       <section class="section" id="cl-widget">
         <div class="container">
@@ -202,12 +257,26 @@
           </div>
           <form class="contact-form">
             <label>
+              Subject
+              <select name="subject" id="contact-subject" required>
+                <option value="">— Select a subject —</option>
+                <option value="collaboration">Collaboration</option>
+                <option value="internship">Internship inquiry</option>
+                <option value="question">General question</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label>
               Name
               <input type="text" name="name" placeholder="Your name" required />
             </label>
             <label>
               Email
-              <input type="email" name="email" placeholder="you@email.com" required />
+              <input type="email" name="email" id="contact-email" placeholder="you@email.com" required />
+            </label>
+            <label>
+              Confirm email
+              <input type="email" name="confirm-email" id="contact-confirm-email" placeholder="Re-enter your email" required />
             </label>
             <label>
               Message
@@ -226,7 +295,7 @@
       </div>
     </footer>
 
-    <script src="js/script.js?v=6"></script>
+    <script src="js/script.js?v=7" defer></script>
   </body>
 </html>
 
