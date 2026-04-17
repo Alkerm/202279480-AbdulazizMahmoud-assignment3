@@ -71,13 +71,12 @@ function initFadeIn() {
 }
 
 /* ─────────────────────────────────────────
- * 3. PROJECT FILTERS + SORT
- * Maintains three independent state variables:
+ * 3. PROJECT FILTERS
+ * Maintains two independent state variables:
  *   activeCat  — selected category  (data-filter buttons)
  *   activeDiff — selected difficulty (data-diff buttons)
- *   activeSort — selected sort order (sort-select dropdown)
- * applyFiltersAndSort() combines all three and re-appends
- * visible cards in sorted order with a staggered animation.
+ * applyFilters() combines both and re-appends
+ * visible cards with a staggered animation.
  * ───────────────────────────────────────── */
 function initProjectFilters() {
   const grid = document.getElementById("project-grid");
@@ -86,9 +85,6 @@ function initProjectFilters() {
 
   let activeCat = "all";
   let activeDiff = "all";
-  let activeSort = "default";
-  // Numeric weights used when sorting by difficulty
-  const diffOrder = { beginner: 1, intermediate: 2, advanced: 3 };
 
   function applyFiltersAndSort() {
     const cards = Array.from(grid.querySelectorAll(".card"));
@@ -100,16 +96,6 @@ function initProjectFilters() {
       card.style.display = catMatch && diffMatch ? "" : "none";
       if (catMatch && diffMatch) visible.push(card);
     });
-
-    if (activeSort === "name-asc") {
-      visible.sort((a, b) => a.dataset.name.localeCompare(b.dataset.name));
-    } else if (activeSort === "name-desc") {
-      visible.sort((a, b) => b.dataset.name.localeCompare(a.dataset.name));
-    } else if (activeSort === "diff-asc") {
-      visible.sort((a, b) => (diffOrder[a.dataset.difficulty] || 0) - (diffOrder[b.dataset.difficulty] || 0));
-    } else if (activeSort === "diff-desc") {
-      visible.sort((a, b) => (diffOrder[b.dataset.difficulty] || 0) - (diffOrder[a.dataset.difficulty] || 0));
-    }
 
     visible.forEach((card, i) => {
       card.style.animation = "none";
@@ -135,17 +121,8 @@ function initProjectFilters() {
       document.querySelectorAll(".filter-btn[data-diff]").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       activeDiff = btn.dataset.diff;
-      applyFiltersAndSort();
     });
   });
-
-  const sortSelect = document.getElementById("sort-select");
-  if (sortSelect) {
-    sortSelect.addEventListener("change", () => {
-      activeSort = sortSelect.value;
-      applyFiltersAndSort();
-    });
-  }
 }
 
 
