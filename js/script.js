@@ -83,23 +83,41 @@ function initProjectFilters() {
   const emptyState = document.getElementById("no-projects");
   if (!grid || !emptyState) return;
 
-  let activeCat = "all";
+  let activeCat  = "all";
   let activeDiff = "all";
+  let activeSort = "date-desc"; // default: newest first
 
   function applyFiltersAndSort() {
     const cards = Array.from(grid.querySelectorAll(".card"));
-    const visible = [];
 
-    cards.forEach((card) => {
-      const catMatch = activeCat === "all" || card.dataset.category === activeCat;
-      const diffMatch = activeDiff === "all" || card.dataset.difficulty === activeDiff;
+    // 1. Filter
+    const visible = cards.filter((card) => {
+      const catMatch  = activeCat  === "all" || card.dataset.category   === activeCat;
+      const diffMatch = activeDiff === "all" || card.dataset.difficulty  === activeDiff;
       card.style.display = catMatch && diffMatch ? "" : "none";
-      if (catMatch && diffMatch) visible.push(card);
+      return catMatch && diffMatch;
     });
 
+    // 2. Sort
+    visible.sort((a, b) => {
+      switch (activeSort) {
+        case "date-asc":
+          return (a.dataset.date || "").localeCompare(b.dataset.date || "");
+        case "date-desc":
+          return (b.dataset.date || "").localeCompare(a.dataset.date || "");
+        case "name-asc":
+          return (a.dataset.name || "").localeCompare(b.dataset.name || "");
+        case "name-desc":
+          return (b.dataset.name || "").localeCompare(a.dataset.name || "");
+        default:
+          return 0;
+      }
+    });
+
+    // 3. Re-append in sorted order with staggered animation
     visible.forEach((card, i) => {
       card.style.animation = "none";
-      void card.offsetWidth; // Force reflow so the animation restarts cleanly
+      void card.offsetWidth; // force reflow so animation restarts
       card.style.animation = `fadeUp 0.35s ease ${i * 0.08}s both`;
       grid.appendChild(card);
     });
@@ -107,6 +125,7 @@ function initProjectFilters() {
     emptyState.style.display = visible.length === 0 ? "block" : "none";
   }
 
+  // Category filter buttons
   document.querySelectorAll(".filter-btn[data-filter]").forEach((btn) => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".filter-btn[data-filter]").forEach((b) => b.classList.remove("active"));
@@ -116,13 +135,24 @@ function initProjectFilters() {
     });
   });
 
+  // Difficulty filter buttons
   document.querySelectorAll(".filter-btn[data-diff]").forEach((btn) => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".filter-btn[data-diff]").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       activeDiff = btn.dataset.diff;
+      applyFiltersAndSort(); // ← was missing before
     });
   });
+
+  // Sort select
+  const sortSelect = document.getElementById("project-sort");
+  if (sortSelect) {
+    sortSelect.addEventListener("change", () => {
+      activeSort = sortSelect.value;
+      applyFiltersAndSort();
+    });
+  }
 }
 
 

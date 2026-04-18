@@ -145,6 +145,15 @@
               <button class="filter-btn" data-diff="intermediate" id="diff-intermediate">🟡 Intermediate</button>
               <button class="filter-btn" data-diff="advanced" id="diff-advanced">🔴 Advanced</button>
             </div>
+            <div class="filter-row" role="group" aria-label="Sort projects">
+              <span class="filter-row-label">Sort:</span>
+              <select class="sort-select" id="project-sort" aria-label="Sort projects by">
+                <option value="date-desc">Newest first</option>
+                <option value="date-asc">Oldest first</option>
+                <option value="name-asc">A → Z</option>
+                <option value="name-desc">Z → A</option>
+              </select>
+            </div>
           </div>
 
           <div class="card-grid" id="project-grid">
