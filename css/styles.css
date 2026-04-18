@@ -788,8 +788,8 @@ textarea.invalid {
   box-shadow: 0 0 0 3px rgba(103, 210, 255, 0.15);
 }
 
-/* Style native select in contact form the same way */
-select {
+/* Style select only inside the contact form — do NOT apply globally */
+.contact-form select {
   width: 100%;
   padding: 12px 14px;
   border-radius: 12px;
@@ -802,7 +802,7 @@ select {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-select:focus {
+.contact-form select:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(103, 210, 255, 0.15);
