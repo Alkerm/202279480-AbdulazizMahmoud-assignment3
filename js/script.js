@@ -115,7 +115,10 @@ function initProjectFilters() {
     });
 
     // 3. Re-append in sorted order with staggered animation
+    // Temporarily remove .fade-in to avoid opacity:0 fighting the inline animation
     visible.forEach((card, i) => {
+      card.classList.remove("fade-in");
+      card.style.opacity = "1";
       card.style.animation = "none";
       void card.offsetWidth; // force reflow so animation restarts
       card.style.animation = `fadeUp 0.35s ease ${i * 0.08}s both`;
@@ -153,6 +156,9 @@ function initProjectFilters() {
       applyFiltersAndSort();
     });
   }
+
+  // Run once on load so the default "Newest first" order is applied immediately
+  applyFiltersAndSort();
 }
 
 
